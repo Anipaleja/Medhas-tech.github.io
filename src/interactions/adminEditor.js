@@ -201,22 +201,9 @@ function createArtTemplate(index) {
   };
 }
 
-function buildEditorMarkup(content) {
+function renderBlogTab(content) {
   return `
-    <div class="admin-toolbar">
-      <div>
-        <p class="section-kicker">Live editor</p>
-        <h2>Update what the site publishes.</h2>
-        <p class="admin-note">Edits stay in your browser until you publish them.</p>
-      </div>
-      <div class="admin-toolbar-actions">
-        <button class="admin-button" type="button" data-admin-action="reset">Reset to defaults</button>
-        <button class="admin-button admin-button-primary" type="button" data-admin-action="save">Publish changes</button>
-      </div>
-      <div class="admin-status" data-admin-status>Working locally.</div>
-    </div>
-
-    <section class="admin-section">
+    <section class="admin-section" data-admin-panel="blog">
       <div class="admin-section-head">
         <div>
           <p class="section-kicker">Blog</p>
@@ -229,8 +216,12 @@ function buildEditorMarkup(content) {
         ${content.blog.posts.map((post, index) => renderBlogSection(post, `blog.posts.${index}`, "blog", index)).join("")}
       </div>
     </section>
+  `;
+}
 
-    <section class="admin-section">
+function renderArtTab(content) {
+  return `
+    <section class="admin-section" data-admin-panel="art">
       <div class="admin-section-head">
         <div>
           <p class="section-kicker">Art</p>
@@ -245,11 +236,52 @@ function buildEditorMarkup(content) {
   `;
 }
 
+function buildEditorMarkup(content, activeTab, statusMessage) {
+  return `
+    <div class="admin-toolbar">
+      <div>
+        <p class="section-kicker">Live editor</p>
+        <h2>Update what the site publishes.</h2>
+        <p class="admin-note">Edits stay in your browser until you publish them.</p>
+      </div>
+      <div class="admin-tabs" role="tablist" aria-label="Admin sections">
+        <button
+          class="admin-tab ${activeTab === "blog" ? "is-active" : ""}"
+          type="button"
+          role="tab"
+          aria-selected="${activeTab === "blog"}"
+          data-admin-tab="blog"
+        >
+          Blog
+        </button>
+        <button
+          class="admin-tab ${activeTab === "art" ? "is-active" : ""}"
+          type="button"
+          role="tab"
+          aria-selected="${activeTab === "art"}"
+          data-admin-tab="art"
+        >
+          Artwork
+        </button>
+      </div>
+      <div class="admin-toolbar-actions">
+        <button class="admin-button" type="button" data-admin-action="reset">Reset to defaults</button>
+        <button class="admin-button admin-button-primary" type="button" data-admin-action="save">Publish changes</button>
+      </div>
+      <div class="admin-status" data-admin-status>${statusMessage}</div>
+    </div>
+
+    ${activeTab === "blog" ? renderBlogTab(content) : renderArtTab(content)}
+  `;
+}
+
 export function mountAdminEditor(root, content, actions) {
   let draft = clone(content);
+  let activeTab = "blog";
+  let statusMessage = "Working locally.";
 
   const render = () => {
-    root.innerHTML = buildEditorMarkup(draft);
+    root.innerHTML = buildEditorMarkup(draft, activeTab, statusMessage);
     bind();
   };
 
@@ -309,34 +341,48 @@ export function mountAdminEditor(root, content, actions) {
 
   const addBlogPost = () => {
     draft.blog.posts.push(createBlogTemplate(draft.blog.posts.length));
+    statusMessage = "Draft updated.";
     render();
   };
 
   const addArtwork = () => {
     draft.art.push(createArtTemplate(draft.art.length));
+    statusMessage = "Draft updated.";
     render();
   };
 
   const removeBlogPost = (index) => {
     draft.blog.posts.splice(index, 1);
+    statusMessage = "Draft updated.";
     render();
   };
 
   const removeArtwork = (index) => {
     draft.art.splice(index, 1);
+    statusMessage = "Draft updated.";
     render();
   };
 
   const publish = () => {
     actions.save(clone(draft));
-    root.querySelector("[data-admin-status]").textContent = "Published locally.";
+    statusMessage = "Published locally.";
     window.dispatchEvent(new Event("contentchange"));
   };
 
   const reset = () => {
     draft = clone(actions.reset());
+    activeTab = "blog";
+    statusMessage = "Reset to defaults.";
     render();
-    root.querySelector("[data-admin-status]").textContent = "Reset to defaults.";
+  };
+
+  const switchTab = (tab) => {
+    if (tab !== "blog" && tab !== "art") {
+      return;
+    }
+
+    activeTab = tab;
+    render();
   };
 
   function bind() {
@@ -370,6 +416,10 @@ export function mountAdminEditor(root, content, actions) {
 
     root.querySelectorAll("[data-admin-remove-art]").forEach((button) => {
       button.addEventListener("click", () => removeArtwork(Number(button.dataset.adminRemoveArt)));
+    });
+
+    root.querySelectorAll("[data-admin-tab]").forEach((button) => {
+      button.addEventListener("click", () => switchTab(button.dataset.adminTab));
     });
   }
 
