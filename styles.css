@@ -477,7 +477,29 @@ h1 span {
 }
 
 .section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
   padding-top: 0.25rem;
+  padding-bottom: 0.15rem;
+}
+
+.section-heading > div {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.section-heading > div::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.18rem;
+  bottom: 0.1rem;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--cyan), var(--pink));
+  opacity: 0.9;
 }
 
 .section-kicker,
@@ -512,7 +534,41 @@ h1 span {
 }
 
 .metric-card {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(239, 232, 221, 0.82));
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 0.35rem;
+  min-height: 190px;
+  padding: 1.25rem 1.2rem 1.1rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(239, 232, 221, 0.8));
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--cyan), var(--pink));
+}
+
+.metric-card::after {
+  content: "";
+  position: absolute;
+  right: -1.1rem;
+  top: -1.1rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.7), transparent 68%);
+  opacity: 0.8;
+}
+
+.metric-card:nth-child(2) {
+  background: linear-gradient(145deg, rgba(245, 249, 248, 0.94), rgba(232, 237, 229, 0.84));
+}
+
+.metric-card:nth-child(3) {
+  background: linear-gradient(145deg, rgba(249, 246, 251, 0.94), rgba(236, 229, 241, 0.82));
 }
 
 .metric-value {
@@ -522,7 +578,7 @@ h1 span {
 }
 
 .metric-label {
-  margin-top: 0.35rem;
+  margin-top: 0.1rem;
   font-family: "Manrope", sans-serif;
   text-transform: uppercase;
   font-size: 0.74rem;
@@ -544,7 +600,17 @@ h1 span {
 }
 
 .principle-card {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(235, 234, 225, 0.82));
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(235, 234, 225, 0.82));
+}
+
+.principle-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--cyan), var(--pink));
 }
 
 .principle-card span,
@@ -562,7 +628,15 @@ h1 span {
 }
 
 .principle-card span {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.95rem;
+}
+
+.principle-card h3 {
+  margin: 0;
+}
+
+.principle-card p {
+  max-width: 34ch;
 }
 
 .page-banner {
@@ -756,6 +830,22 @@ h1 span {
   border-radius: 24px;
   box-shadow: var(--shadow-soft);
   overflow: hidden;
+}
+
+.art-piece-photo {
+  grid-area: visual;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  max-width: 210px;
+  aspect-ratio: 1;
+  justify-self: end;
+  align-self: end;
+  border: 1px solid var(--stroke);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  object-fit: cover;
+  display: block;
 }
 
 .art-piece-a .art-piece-visual {
@@ -1001,6 +1091,17 @@ h1 span {
   margin-bottom: 1rem;
 }
 
+.art-detail-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--stroke);
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 1rem;
+  object-fit: cover;
+  display: block;
+}
+
 .art-detail-a {
   background:
     radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.9), transparent 18%),
@@ -1038,6 +1139,207 @@ h1 span {
   transform: translateY(0);
 }
 
+.admin-page {
+  padding-bottom: 0.2rem;
+}
+
+.admin-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-shell-copy,
+.admin-toolbar,
+.admin-section,
+.admin-card,
+.admin-subcard {
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.admin-shell-copy,
+.admin-toolbar,
+.admin-section {
+  padding: 1.2rem;
+}
+
+.admin-shell-copy h1,
+.admin-toolbar h2,
+.admin-section-head h3,
+.admin-card h3 {
+  margin: 0;
+  font-family: "Cinzel", serif;
+}
+
+.admin-intro,
+.admin-note {
+  margin: 0.7rem 0 0;
+  max-width: 68ch;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.admin-toolbar {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-toolbar-actions,
+.admin-section-head,
+.admin-card-head,
+.admin-subgroup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.admin-status {
+  font-family: "Manrope", sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-button,
+.admin-mini-button {
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(110, 167, 166, 0.28), rgba(255, 255, 255, 0.84));
+  color: var(--ink);
+  font-family: "Manrope", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.68rem 1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-button-primary {
+  background: linear-gradient(135deg, #3b3144, #594868);
+  color: #fcf8f2;
+}
+
+.admin-mini-button {
+  padding: 0.5rem 0.8rem;
+}
+
+.admin-root,
+.admin-list,
+.admin-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-section-head {
+  margin-bottom: 1rem;
+}
+
+.admin-card {
+  padding: 1rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.admin-card-head {
+  align-items: start;
+}
+
+.admin-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.admin-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-field {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.admin-field span,
+.admin-subgroup-head span {
+  font-family: "Manrope", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.admin-input {
+  width: 100%;
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.admin-input:focus {
+  outline: 2px solid rgba(110, 167, 166, 0.35);
+  outline-offset: 1px;
+}
+
+.admin-input[type="file"] {
+  padding: 0.55rem;
+}
+
+.admin-field textarea.admin-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.admin-subgroup {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border-radius: 12px;
+  background: rgba(245, 241, 233, 0.72);
+}
+
+.admin-subcard {
+  padding: 0.85rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-art-preview-wrap {
+  display: grid;
+  gap: 0.85rem;
+  align-items: start;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+}
+
+.admin-art-preview {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.admin-art-preview-empty {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-family: "Manrope", sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 @media (max-width: 1024px) {
   .hero,
   .featured-post,
@@ -1065,6 +1367,11 @@ h1 span {
 
   .art-piece {
     grid-template-columns: minmax(0, 1fr) minmax(120px, 40%);
+  }
+
+  .admin-grid-2,
+  .admin-art-preview-wrap {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1114,10 +1421,19 @@ h1 span {
       "visual";
   }
 
-  .art-piece-visual {
+  .art-piece-visual,
+  .art-piece-photo {
     max-width: none;
     width: 100%;
     min-height: 180px;
+  }
+
+  .admin-shell-copy,
+  .admin-toolbar,
+  .admin-section,
+  .admin-card,
+  .admin-subcard {
+    padding: 1rem;
   }
 }
 

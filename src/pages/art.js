@@ -7,7 +7,9 @@ function renderArtPiece(piece) {
       </div>
       <h3>${piece.title}</h3>
       <p>${piece.description}</p>
-      <div class="art-piece-visual" aria-hidden="true"></div>
+      ${piece.image
+        ? `<img class="art-piece-photo" src="${piece.image}" alt="${piece.title}" />`
+        : `<div class="art-piece-visual" aria-hidden="true"></div>`}
     </a>
   `;
 }

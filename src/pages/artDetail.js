@@ -37,7 +37,9 @@ export function renderArtDetailPage(piece, content) {
 
     <section class="detail-layout reveal reveal-delay-1">
       <article class="detail-article">
-        <div class="art-detail-canvas art-detail-${piece.variant}" aria-hidden="true"></div>
+        ${piece.image
+          ? `<img class="art-detail-photo" src="${piece.image}" alt="${piece.title}" />`
+          : `<div class="art-detail-canvas art-detail-${piece.variant}" aria-hidden="true"></div>`}
         <p>${piece.body.intro}</p>
         ${piece.body.layers.map((layer, index) => renderLayer(layer, index)).join("")}
         <p class="detail-outro">${piece.body.outro}</p>

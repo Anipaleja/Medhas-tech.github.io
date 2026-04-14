@@ -7,10 +7,25 @@ import { renderBlogDetailPage } from "./pages/blogDetail.js";
 import { renderArtPage } from "./pages/art.js";
 import { renderArtDetailPage } from "./pages/artDetail.js";
 import { renderNotFoundPage } from "./pages/notFound.js";
+import { renderAdminPage } from "./pages/admin.js";
 import { initRevealAnimations } from "./interactions/reveal.js";
 import { initPaletteSwitcher } from "./interactions/paletteSwitcher.js";
+import { mountAdminEditor } from "./interactions/adminEditor.js";
+import { loadContent, resetContent, saveContent } from "./data/contentStore.js";
 
 function getRoute() {
+  const normalizedPath = window.location.pathname.replace(/\/+$/, "");
+  const pathSegments = normalizedPath.split("/").filter(Boolean);
+  const lastSegment = pathSegments[pathSegments.length - 1];
+  const secondLastSegment = pathSegments[pathSegments.length - 2];
+  const isAdminPath =
+    lastSegment === "admin" ||
+    (lastSegment === "index.html" && secondLastSegment === "admin");
+
+  if (isAdminPath) {
+    return { section: "admin", slug: "" };
+  }
+
   const raw = window.location.hash.replace(/^#\/?/, "");
   const [section = "home", slug = ""] = raw.split("/");
   return { section: section || "home", slug };
@@ -34,6 +49,8 @@ function renderPage(route, content) {
       }
 
       return renderArtPage(content);
+    case "admin":
+      return renderAdminPage(content);
     default:
       return renderNotFoundPage();
   }
@@ -44,24 +61,49 @@ export function bootstrapApp(root, content) {
     throw new Error("Root element was not found");
   }
 
+  let currentContent = loadContent(content);
+
   const paint = () => {
     const route = getRoute();
     root.innerHTML = `
       <div class="page-aurora" aria-hidden="true"></div>
       <div class="site-shell">
-        ${renderHeader(content.person)}
-        ${renderNavigation(route.section)}
+        ${renderHeader(currentContent.person)}
+        ${route.section === "admin" ? "" : renderNavigation(route.section)}
         <main>
-          ${renderPage(route, content)}
+          ${renderPage(route, currentContent)}
         </main>
-        ${renderFooter(content.person)}
+        ${route.section === "admin" ? "" : renderFooter(currentContent.person)}
       </div>
     `;
 
     initRevealAnimations();
-    initPaletteSwitcher(content.palettes);
+    initPaletteSwitcher(currentContent.palettes);
+
+    if (route.section === "admin") {
+      const adminRoot = root.querySelector("[data-admin-root]");
+
+      if (adminRoot) {
+        mountAdminEditor(adminRoot, currentContent, {
+          save: (nextContent) => {
+            currentContent = nextContent;
+            saveContent(nextContent);
+          },
+          reset: () => {
+            resetContent();
+            currentContent = loadContent(content);
+            saveContent(currentContent);
+            return currentContent;
+          },
+        });
+      }
+    }
   };
 
   paint();
   window.addEventListener("hashchange", paint);
+  window.addEventListener("contentchange", () => {
+    currentContent = loadContent(content);
+    paint();
+  });
 }
